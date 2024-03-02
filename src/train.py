@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
 from lstm_model import LSTMS
+from utils import parse_args
 
 def create_dataset(data, time_step=60):
     X, Y = [], []
@@ -16,7 +17,9 @@ def create_dataset(data, time_step=60):
     return np.array(X), np.array(Y)
 
 def main():
-    df = pd.read_csv('../data/nicon_train.csv')
+    args = parse_args()
+    
+    df = pd.read_csv(args.train_data)
     close_prices = df['Close'].values.reshape(-1,1)
 
     scaler = MinMaxScaler(feature_range=(0, 1))
@@ -30,7 +33,7 @@ def main():
     model.compile(optimizer='adam', loss='mean_squared_error')
     callback = [EarlyStopping(patience=5)]
     model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=100, batch_size=64, callbacks=callback)
-    model.save('../models/nicon_model_close_only.h5')
+    model.save(args.model_path)
 
 if __name__ == '__main__':
     main()

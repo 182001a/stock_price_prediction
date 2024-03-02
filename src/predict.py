@@ -5,6 +5,8 @@ import japanize_matplotlib
 import numpy as np
 import pandas as pd
 
+from utils import parse_args
+
 def create_dataset(data, time_step=60):
     X = []
     for i in range(len(data) - time_step -1):
@@ -13,7 +15,9 @@ def create_dataset(data, time_step=60):
     return np.array(X)
 
 def main():
-    df = pd.read_csv('../data/nicon_test.csv')
+    args = parse_args()
+
+    df = pd.read_csv(args.test_data)
     
     # 'Close'価格のみを抽出
     close_prices = df[['Close']].values
@@ -23,7 +27,7 @@ def main():
     time_step = 1
     X_test = create_dataset(scaled_close_prices, time_step)
     
-    model = load_model('../models/nicon_model_close_only.h5')
+    model = load_model(args.model_path)
     
     y_pred = model.predict(X_test)
     # 予測値のスケーリングを元に戻す
